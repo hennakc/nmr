@@ -34,16 +34,18 @@ const AppInner: React.FC = () => {
       )}
 
       {!isLoading && !showIntro && (
-        <div className="app-container animate-fade-in">
-          <Header onCartOpen={openCart} />
+        <div className={`app-root${cartOpen ? ' cart-open' : ''}`}>
+          <div className="app-container animate-fade-in">
+            <Header onCartOpen={openCart} />
 
-          <main id="main-content" className="main-content" role="main">
-            <MenuSection onCartOpen={openCart} />
-          </main>
+            <main id="main-content" className="main-content" role="main">
+              <MenuSection onCartOpen={openCart} />
+            </main>
 
-          <footer className="site-footer" role="contentinfo">
-            <p>© {new Date().getFullYear()} <strong>NMR'S UPTOWN</strong> Fine Dine Restaurant. All rights reserved.</p>
-          </footer>
+            <footer className="site-footer" role="contentinfo">
+              <p>© {new Date().getFullYear()} <strong>NMR'S UPTOWN</strong> Fine Dine Restaurant. All rights reserved.</p>
+            </footer>
+          </div>
 
           <CartDrawer isOpen={cartOpen} onClose={closeCart} />
 

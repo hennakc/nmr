@@ -893,3 +893,84 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     font-size: 12px;
   }
 }
+
+/* ============================================================
+   DYNAMIC TOGGLE SIDEBAR LAYOUT (desktop >= 1024px)
+   ============================================================ */
+@media (min-width: 1024px) {
+  /* Default page layout: transition padding when sidebar opens/closes */
+  .app-container {
+    padding-right: 0;
+    transition: padding-right 0.35s var(--ease-smooth);
+  }
+  /* Offset content when cart is open */
+  .cart-open .app-container {
+    padding-right: 390px;
+  }
+
+  /* Transition header width */
+  .site-header {
+    right: 0;
+    transition: right 0.35s var(--ease-smooth);
+  }
+  /* Shrink header when cart is open to prevent logo/button overlap */
+  .cart-open .site-header {
+    right: 390px;
+  }
+
+  /* Docked sidebar drawer style */
+  .cart-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 390px !important;
+    transform: translateX(100%) !important; /* Hidden by default */
+    transition: transform 0.35s var(--ease-smooth);
+    box-shadow: -10px 0 40px rgba(0, 0, 0, 0.3);
+    border-left: 1.5px solid rgba(255, 255, 255, 0.08);
+    z-index: 150;
+  }
+  /* Slide in and dock when open */
+  .cart-open .cart-drawer {
+    transform: translateX(0) !important;
+  }
+
+  /* Disable backdrop dimming on desktop (keep menu interactive) */
+  .cart-backdrop {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  /* Hide floating mobile FAB on desktop */
+  .cart-fab {
+    display: none !important;
+  }
+
+  /* --- Dynamic Grid Column Adjustments --- */
+  /* Default: 3 columns starting at 1024px, 4 columns at 1280px */
+  .menu-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+  @media (min-width: 1280px) {
+    .menu-grid {
+      grid-template-columns: repeat(4, 1fr) !important;
+    }
+  }
+
+  /* When Sidebar is Open: 2 columns starting at 1024px, 3 columns at 1360px, 4 columns at 1720px */
+  .cart-open .menu-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  @media (min-width: 1360px) {
+    .cart-open .menu-grid {
+      grid-template-columns: repeat(3, 1fr) !important;
+    }
+  }
+  @media (min-width: 1720px) {
+    .cart-open .menu-grid {
+      grid-template-columns: repeat(4, 1fr) !important;
+    }
+  }
+}
