@@ -303,43 +303,53 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 @media(min-width:1100px){ .menu-grid{ grid-template-columns:repeat(4,1fr);gap:22px; } }
 
 /* ============================================================
-   FLIP CARD
+   MENU CARD & DISSOLVE TRANSITION
    ============================================================ */
-.flip-card {
-  perspective:1000px;height:260px;cursor:pointer;
-  opacity:0;transform:translateY(28px);
+.menu-card {
+  position:relative;
+  height:260px;
+  cursor:pointer;
+  opacity:0;
+  transform:translateY(28px);
   transition:opacity .6s var(--ease-smooth),transform .6s var(--ease-smooth);
 }
-.flip-card.visible { opacity:1;transform:translateY(0); }
+.menu-card.visible { opacity:1;transform:translateY(0); }
 
-.flip-card-inner {
-  position:relative;width:100%;height:100%;
-  transform-style:preserve-3d;
-  transition:transform .65s var(--ease-flip);
-}
-.flip-card.flipped .flip-card-inner { transform:rotateY(180deg); }
-
-.flip-card-front,
-.flip-card-back {
-  position:absolute;inset:0;
-  backface-visibility:hidden;-webkit-backface-visibility:hidden;
-  border-radius:var(--radius-lg);overflow:hidden;
+.card-front,
+.card-back {
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  border-radius:var(--radius-lg);
+  overflow:hidden;
+  transition:opacity 0.5s var(--ease-smooth), transform 0.5s var(--ease-smooth), box-shadow 0.3s ease;
 }
 
 /* ── Front ── */
-.flip-card-front {
+.card-front {
   background:var(--glass);
   backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
   border:1.5px solid var(--glass-border);
   box-shadow:var(--glass-shadow);
-  display:flex;flex-direction:column;
-  transition:box-shadow .3s ease;
+  display:flex;
+  flex-direction:column;
+  z-index:2;
+  opacity:1;
+  pointer-events:auto;
+  transform:scale(1);
 }
-.flip-card:hover .flip-card-front { box-shadow:var(--glass-shadow-hover); }
+.menu-card.revealed .card-front {
+  opacity:0;
+  transform:scale(0.95);
+  pointer-events:none;
+  z-index:1;
+}
+.menu-card:hover .card-front { box-shadow:var(--glass-shadow-hover); }
 
 .card-img-wrap { flex:1;overflow:hidden;position:relative; }
 .card-img { width:100%;height:100%;object-fit:cover;transition:transform .5s var(--ease-smooth); }
-.flip-card:hover .card-img { transform:scale(1.06); }
+.menu-card:hover .card-img { transform:scale(1.06); }
 
 .card-img-placeholder {
   width:100%;height:100%;
@@ -359,7 +369,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 .card-in-cart-badge {
   position:absolute;bottom:10px;left:10px;
-  background:var(--text-accent);color:#fff;
+  background:var(--text-accent);color:#130601;
   border-radius:var(--radius-pill);padding:3px 10px;
   font-size:10px;font-weight:700;letter-spacing:.03em;
   box-shadow:0 2px 8px rgba(181,69,27,.35);
@@ -392,13 +402,48 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .card-add-btn--back { width:100%;justify-content:center;padding:10px;margin-top:4px; }
 
 /* ── Back ── */
-.flip-card-back {
-  transform:rotateY(180deg);
-  background:var(--glass);
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+.card-back {
+  background:var(--glass-strong);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
   border:1.5px solid var(--glass-border);
   box-shadow:var(--glass-shadow-hover);
-  padding:18px;display:flex;flex-direction:column;gap:10px;
+  padding:18px;
+  z-index:1;
+  opacity:0;
+  pointer-events:none;
+  transform:scale(1.05);
+}
+.menu-card.revealed .card-back {
+  opacity:1;
+  transform:scale(1);
+  pointer-events:auto;
+  z-index:2;
+}
+
+/* Watermark and Content positioning */
+.card-back-watermark {
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  opacity:0.07;
+  filter:grayscale(100%) contrast(1.1) brightness(0.6);
+  z-index:0;
+  pointer-events:none;
+  transition:transform 0.6s var(--ease-smooth);
+}
+.menu-card.revealed:hover .card-back-watermark {
+  transform:scale(1.06);
+}
+
+.card-back-content {
+  position:relative;
+  z-index:1;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
 }
 .card-back-label { font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--text-accent); }
 .card-back-title { font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--text-dark);letter-spacing:-.01em;line-height:1.2; }
