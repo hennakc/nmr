@@ -672,10 +672,24 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   filter: blur(10px);
   pointer-events: none;
 }
-.intro-video {
+.intro-video-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(40px) scale(1.15);
+  opacity: 0.38;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.intro-video-fg {
+  position: relative;
   width: 100%;
   height: 100%;
   object-fit: contain;
+  z-index: 2;
 }
 
 /* Play/Interact Overlay */
