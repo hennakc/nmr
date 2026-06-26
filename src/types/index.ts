@@ -2,7 +2,9 @@ export interface MenuItem {
   id: string;
   name: string;
   price: number;
+  imageUrl?: string;
   videoUrl?: string;
+  ingredients?: string[];
 }
 
 export interface MenuCategory {

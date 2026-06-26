@@ -5,68 +5,77 @@ interface LoadingScreenProps {
   onComplete: () => void;
 }
 
+const STATUSES = [
+  'Setting the table for you…',
+  'Curating the finest dishes…',
+  'Warming up the kitchen…',
+  'Almost ready to serve…',
+];
+
 const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
   const [exiting, setExiting] = useState(false);
-  const [progressText, setProgressText] = useState('Preparing your experience');
+  const [statusIdx, setStatusIdx] = useState(0);
 
   useEffect(() => {
-    const texts = [
-      'Preparing your experience',
-      'Curating the finest dishes',
-      'Setting the table',
-      'Welcome to UPTOWN',
-    ];
-    let idx = 0;
-    const textInterval = setInterval(() => {
-      idx = (idx + 1) % texts.length;
-      setProgressText(texts[idx]);
+    const interval = setInterval(() => {
+      setStatusIdx((i) => (i + 1) % STATUSES.length);
     }, 700);
 
-    const exitTimer = setTimeout(() => {
-      setProgressText('Welcome to UPTOWN');
-      clearInterval(textInterval);
-      setTimeout(() => {
-        setExiting(true);
-        setTimeout(onComplete, 800);
-      }, 400);
-    }, 2800);
+    const exit = setTimeout(() => {
+      clearInterval(interval);
+      setExiting(true);
+      setTimeout(onComplete, 650);
+    }, 2900);
 
     return () => {
-      clearInterval(textInterval);
-      clearTimeout(exitTimer);
+      clearInterval(interval);
+      clearTimeout(exit);
     };
   }, [onComplete]);
 
   return (
-    <div className={`loading-screen ${exiting ? 'exiting' : ''}`} role="status" aria-label="Loading NMR's Uptown">
-      {/* Ambient orbs */}
-      <div className="loading-bg-orbs">
-        <div className="loading-orb loading-orb-1" />
-        <div className="loading-orb loading-orb-2" />
-        <div className="loading-orb loading-orb-3" />
-      </div>
-
+    <div
+      className={`loading-screen${exiting ? ' exiting' : ''}`}
+      role="status"
+      aria-label="Loading NMR's Uptown"
+    >
       <div className="loading-content">
-        {/* Logo */}
-        <div className="loading-logo-wrapper">
-          <div className="loading-logo-ring" />
-          <div className="loading-logo-img-container">
-            <img
-              src="/logo.png"
-              alt="NMR's UPTOWN Fine Dine Restaurant"
-              draggable={false}
+        {/* Apple-Style Centered Logo with Spinner */}
+        <div className="loading-apple-wrap">
+          <svg className="loading-apple-spinner" viewBox="0 0 100 100">
+            <circle
+              cx="50"
+              cy="50"
+              r="44"
+              stroke="rgba(255, 255, 255, 0.12)"
+              strokeWidth="2.5"
+              fill="none"
             />
-          </div>
+            <circle
+              cx="50"
+              cy="50"
+              r="44"
+              stroke="#F5F0EA"
+              strokeWidth="2.5"
+              strokeDasharray="70 200"
+              strokeLinecap="round"
+              fill="none"
+              className="spinner-arc"
+            />
+          </svg>
+          <img
+            src="/logo.png"
+            alt="NMR's UPTOWN Fine Dine Restaurant"
+            className="loading-apple-logo"
+            draggable={false}
+          />
         </div>
 
-        <div className="loading-divider" />
-
-        {/* Progress */}
-        <div className="loading-progress-wrapper">
-          <div className="loading-progress-track">
-            <div className="loading-progress-bar" />
-          </div>
-          <span className="loading-progress-text">{progressText}</span>
+        {/* Dynamic cute loading status */}
+        <div className="loading-status-wrap">
+          <span className="loading-status-text" aria-live="polite">
+            {STATUSES[statusIdx]}
+          </span>
         </div>
       </div>
     </div>
