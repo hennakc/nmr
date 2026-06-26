@@ -663,18 +663,18 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   transition:all .3s var(--ease-bounce);
   letter-spacing:.01em;
 }
-.cart-btn-waiter {
-  background:var(--text-dark);color:#130601;
-  box-shadow:0 4px 16px rgba(0,0,0,.25);
+.cart-btn-message {
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  padding:15px 20px;border-radius:var(--radius-md);
+  font-family:var(--font-body);font-size:14px;font-weight:600;
+  letter-spacing:.02em;
+  background:rgba(212,168,83,.08);
+  color:var(--text-accent);
+  border:1.5px solid rgba(212,168,83,.22);
+  cursor:default;
+  pointer-events:none;
+  box-shadow:0 2px 8px rgba(0,0,0,.15);
 }
-.cart-btn-waiter:hover { background:var(--text-accent);color:#130601;transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.4); }
-
-.cart-btn-checkout {
-  background:rgba(255,255,255,.05);color:var(--text-dark);
-  border:1.5px solid rgba(255,255,255,.08);
-  backdrop-filter:blur(8px);
-}
-.cart-btn-checkout:hover { background:rgba(255,255,255,.12);color:var(--text-dark);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.35); }
 
 .cart-clear-btn {
   font-size:12px;font-weight:500;color:var(--text-light);

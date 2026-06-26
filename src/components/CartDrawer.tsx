@@ -47,14 +47,14 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
       <aside
         id="cart-drawer"
         className={`cart-drawer${isOpen ? ' cart-drawer--open' : ''}`}
-        aria-label="Your order"
+        aria-label="Order summary"
         aria-modal="true"
         role="dialog"
       >
         {/* Header */}
         <div className="cart-header">
           <div className="cart-header-left">
-            <h2 className="cart-title">Your Order</h2>
+            <h2 className="cart-title">Order Summary</h2>
             {totalItems > 0 && (
               <span className="cart-count-badge">{totalItems} item{totalItems !== 1 ? 's' : ''}</span>
             )}
@@ -162,28 +162,14 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
 
         {/* Actions (Always visible) */}
         <div className="cart-actions">
-          <button
-            id="cart-call-waiter-btn"
-            className="cart-btn cart-btn-waiter"
-            onClick={() => alert(totalItems > 0 ? 'A waiter has been notified!' : 'A waiter has been notified to assist you!')}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 11.5a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .84h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
+          <div className="cart-btn-message" role="status">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginRight: 6, verticalAlign: 'middle', display: 'inline-block' }}>
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="16" x2="12" y2="12" />
+              <line x1="12" y1="8" x2="12.01" y2="8" />
             </svg>
-            Call the Waiter
-          </button>
-          <button
-            id="cart-checkout-btn"
-            className="cart-btn cart-btn-checkout"
-            onClick={() => alert(totalItems > 0 ? 'Please proceed to the counter. Your total is ₹' + total : 'Please proceed to the counter.')}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <rect x="2" y="3" width="20" height="14" rx="2" />
-              <line x1="8" y1="21" x2="16" y2="21" />
-              <line x1="12" y1="17" x2="12" y2="21" />
-            </svg>
-            Order at the Counter
-          </button>
+            Call the waiter and continue
+          </div>
           {items.length > 0 && (
             <button className="cart-clear-btn" onClick={clearCart}>
               Clear order
