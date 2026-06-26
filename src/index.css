@@ -1,0 +1,4 @@
+/* Tailwind base resets only */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
