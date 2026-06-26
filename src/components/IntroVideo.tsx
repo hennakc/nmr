@@ -7,8 +7,7 @@ interface IntroVideoProps {
 }
 
 const IntroVideo: React.FC<IntroVideoProps> = ({ src, onComplete }) => {
-  const videoBgRef = useRef<HTMLVideoElement>(null);
-  const videoFgRef = useRef<HTMLVideoElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [isMuted, setIsMuted] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [showPlayOverlay, setShowPlayOverlay] = useState(false);
@@ -16,33 +15,30 @@ const IntroVideo: React.FC<IntroVideoProps> = ({ src, onComplete }) => {
   const [isExiting, setIsExiting] = useState(false);
 
   useEffect(() => {
-    const videoBg = videoBgRef.current;
-    const videoFg = videoFgRef.current;
-    if (!videoBg || !videoFg) return;
+    const video = videoRef.current;
+    if (!video) return;
 
     // Attempt autoplay with sound
-    const playPromise = videoFg.play();
+    const playPromise = video.play();
 
     if (playPromise !== undefined) {
       playPromise
         .then(() => {
           setIsPlaying(true);
           setIsMuted(false);
-          videoBg.play().catch(() => {});
         })
         .catch((error) => {
           console.log("Autoplay with sound blocked, trying muted...", error);
           // Try muted autoplay
-          videoFg.muted = true;
+          video.muted = true;
           setIsMuted(true);
           
-          const mutedPlayPromise = videoFg.play();
+          const mutedPlayPromise = video.play();
           if (mutedPlayPromise !== undefined) {
             mutedPlayPromise
               .then(() => {
                 setIsPlaying(true);
                 setShowUnmuteHint(true);
-                videoBg.play().catch(() => {});
               })
               .catch((mutedError) => {
                 console.log("Muted autoplay blocked, showing play overlay", mutedError);
@@ -54,19 +50,17 @@ const IntroVideo: React.FC<IntroVideoProps> = ({ src, onComplete }) => {
   }, []);
 
   const handlePlayClick = () => {
-    const videoBg = videoBgRef.current;
-    const videoFg = videoFgRef.current;
-    if (!videoBg || !videoFg) return;
+    const video = videoRef.current;
+    if (!video) return;
     
-    videoFg.muted = false;
+    video.muted = false;
     setIsMuted(false);
     setShowPlayOverlay(false);
     setShowUnmuteHint(false);
     
-    videoFg.play()
+    video.play()
       .then(() => {
         setIsPlaying(true);
-        videoBg.play().catch(() => {});
       })
       .catch((err) => {
         console.error("Playback failed after interaction:", err);
@@ -75,11 +69,11 @@ const IntroVideo: React.FC<IntroVideoProps> = ({ src, onComplete }) => {
 
   const handleMuteToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const videoFg = videoFgRef.current;
-    if (!videoFg) return;
+    const video = videoRef.current;
+    if (!video) return;
     
-    const newMuted = !videoFg.muted;
-    videoFg.muted = newMuted;
+    const newMuted = !video.muted;
+    video.muted = newMuted;
     setIsMuted(newMuted);
     if (!newMuted) {
       setShowUnmuteHint(false);
@@ -89,30 +83,16 @@ const IntroVideo: React.FC<IntroVideoProps> = ({ src, onComplete }) => {
   const triggerExit = () => {
     if (isExiting) return;
     setIsExiting(true);
-    videoBgRef.current?.pause();
-    videoFgRef.current?.pause();
     // Allow fadeout animation to complete
     setTimeout(onComplete, 800);
   };
 
   return (
     <div className={`intro-container ${isExiting ? 'intro-exit' : ''}`}>
-      {/* Ambient Blurred Background Video to fill the empty space on phone screens */}
       <video
-        ref={videoBgRef}
+        ref={videoRef}
         src={src}
-        className="intro-video-bg"
-        playsInline
-        muted
-        loop
-        aria-hidden="true"
-      />
-
-      {/* High-Contrast Foreground Video showing 100% of the content */}
-      <video
-        ref={videoFgRef}
-        src={src}
-        className="intro-video-fg"
+        className="intro-video"
         playsInline
         onEnded={triggerExit}
       />
