@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from 'react';
 import { CartProvider, useCart } from './context/CartContext';
-import LoadingScreen from './components/LoadingScreen';
 import IntroVideo from './components/IntroVideo';
 import Header from './components/Header';
 import MenuSection from './components/MenuSection';
@@ -8,15 +7,9 @@ import CartDrawer from './components/CartDrawer';
 import './styles/global.css';
 
 const AppInner: React.FC = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [showIntro, setShowIntro] = useState(false);
+  const [showIntro, setShowIntro] = useState(true);
   const [cartOpen, setCartOpen] = useState(false);
   const { totalItems } = useCart();
-
-  const handleLoadComplete = useCallback(() => {
-    setIsLoading(false);
-    setShowIntro(true);
-  }, []);
 
   const handleIntroComplete = useCallback(() => {
     setShowIntro(false);
@@ -27,13 +20,11 @@ const AppInner: React.FC = () => {
 
   return (
     <>
-      {isLoading && <LoadingScreen onComplete={handleLoadComplete} />}
-
-      {!isLoading && showIntro && (
+      {showIntro && (
         <IntroVideo src="/intro.mp4" onComplete={handleIntroComplete} />
       )}
 
-      {!isLoading && !showIntro && (
+      {!showIntro && (
         <div className={`app-root${cartOpen ? ' cart-open' : ''}`}>
           <div className="app-container animate-fade-in">
             <Header onCartOpen={openCart} />
@@ -49,7 +40,7 @@ const AppInner: React.FC = () => {
 
           <CartDrawer isOpen={cartOpen} onClose={closeCart} />
 
-          {/* Floating Cart FAB — mobile */}
+          {/* Floating Cart FAB */}
           <button
             className="cart-fab"
             onClick={openCart}

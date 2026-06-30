@@ -45,12 +45,17 @@
    RESET
    ============================================================ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-body { font-family: var(--font-body); background: var(--bg-gradient); min-height: 100vh; color: var(--text-dark); overflow-x: hidden; }
-button { font-family: inherit; cursor: pointer; border: none; background: none; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; height: 100%; }
+body { font-family: var(--font-body); background: var(--bg-gradient); min-height: 100dvh; color: var(--text-dark); overflow-x: hidden; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; -webkit-tap-highlight-color: transparent; }
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: #FFD3B6; }
 ::-webkit-scrollbar-thumb { background: #b5451b; border-radius: 99px; }
+
+/* ============================================================
+   MOBILE VIEWPORT FIX
+   ============================================================ */
+#root { min-height: 100dvh; }
 
 /* ============================================================
    KEYFRAMES
@@ -265,24 +270,32 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
    MENU SECTION — Apple-style typography
    ============================================================ */
 .menu-section {
-  padding: 48px 20px 80px;
+  padding: 28px 14px 100px;
   max-width: 1300px;
   margin: 0 auto;
 }
+@media(min-width: 480px) {
+  .menu-section { padding: 36px 18px 100px; }
+}
+@media(min-width: 768px) {
+  .menu-section { padding: 48px 20px 80px; }
+}
 
-.menu-section-head { text-align:center;margin-bottom:44px; }
+.menu-section-head { text-align:center;margin-bottom:28px; }
+@media(min-width: 480px) { .menu-section-head { margin-bottom:36px; } }
+@media(min-width: 768px) { .menu-section-head { margin-bottom:44px; } }
 
 .menu-section-label {
   display:inline-block;padding:5px 14px;border-radius:var(--radius-pill);
   background:rgba(255,255,255,.65);backdrop-filter:blur(12px);
   border:1px solid rgba(255,255,255,.85);
   font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;
-  color:var(--text-accent);margin-bottom:14px;
+  color:var(--text-accent);margin-bottom:10px;
 }
 
 .menu-section-title {
   font-family:var(--font-display);
-  font-size:clamp(32px,6vw,56px);
+  font-size:clamp(26px,8vw,56px);
   font-weight:700;
   letter-spacing:-0.025em;
   color:var(--text-dark);
@@ -291,14 +304,14 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 .menu-section-hint {
   display:flex;align-items:center;justify-content:center;gap:6px;
-  font-size:13px;color:var(--text-light);margin-top:10px;font-weight:400;
+  font-size:12px;color:var(--text-light);margin-top:8px;font-weight:400;
 }
 
 /* ============================================================
    MENU GRID — mobile first
    ============================================================ */
-.menu-grid { display:grid;grid-template-columns:1fr;gap:16px; }
-@media(min-width:480px){ .menu-grid{ grid-template-columns:repeat(2,1fr);gap:18px; } }
+.menu-grid { display:grid;grid-template-columns:1fr;gap:14px; }
+@media(min-width:420px){ .menu-grid{ grid-template-columns:repeat(2,1fr);gap:16px; } }
 @media(min-width:768px){ .menu-grid{ grid-template-columns:repeat(3,1fr);gap:20px; } }
 @media(min-width:1100px){ .menu-grid{ grid-template-columns:repeat(4,1fr);gap:22px; } }
 
@@ -307,12 +320,13 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
    ============================================================ */
 .menu-card {
   position:relative;
-  height:260px;
+  height:240px;
   cursor:pointer;
   opacity:0;
   transform:translateY(28px);
   transition:opacity .6s var(--ease-smooth),transform .6s var(--ease-smooth);
 }
+@media(min-width: 480px) { .menu-card { height:260px; } }
 .menu-card.visible { opacity:1;transform:translateY(0); }
 
 .card-front,
@@ -683,17 +697,17 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 .cart-clear-btn:hover { color:#c00; }
 
-/* Floating cart FAB — mobile */
+/* Floating cart FAB — always visible on mobile-focused app */
 .cart-fab {
-  display:none;
-  position:fixed;bottom:24px;right:24px;z-index:199;
-  width:60px;height:60px;border-radius:50%;
+  display:flex;
+  position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));right:20px;z-index:199;
+  width:58px;height:58px;border-radius:50%;
   background:var(--text-dark);color:#fff;
   align-items:center;justify-content:center;
-  box-shadow:0 8px 32px rgba(29,29,31,.35);
+  box-shadow:0 8px 32px rgba(29,29,31,.45);
   transition:all .3s var(--ease-bounce);
 }
-.cart-fab:hover { background:var(--text-accent);transform:scale(1.08); }
+.cart-fab:active { background:var(--text-accent);transform:scale(0.95); }
 .cart-fab-badge {
   position:absolute;top:-3px;right:-3px;
   min-width:20px;height:20px;padding:0 5px;
@@ -703,11 +717,8 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   border:2px solid white;
   animation:cartBadgePop .4s var(--ease-bounce);
 }
-@media(max-width:640px){
-  .cart-fab { display:flex; }
-}
 
-/* Cinematic Intro Video Player */
+/* Cinematic Intro Video Player — mobile full screen */
 .intro-container {
   position: fixed;
   inset: 0;
@@ -718,6 +729,8 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   justify-content: center;
   overflow: hidden;
   opacity: 1;
+  width: 100vw;
+  height: 100dvh;
   transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), filter 0.8s cubic-bezier(0.25, 1, 0.5, 1);
 }
 .intro-exit {
@@ -729,6 +742,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
 }
 
 /* Play/Interact Overlay */
@@ -895,82 +909,82 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 
 /* ============================================================
+   MOBILE CARD TOUCH IMPROVEMENTS
+   ============================================================ */
+@media (max-width: 767px) {
+  /* On mobile, reveal back on tap (handled by JS), improve tap targets */
+  .card-add-btn {
+    padding: 9px 16px;
+    font-size: 13px;
+  }
+  .card-name { font-size: 14px; }
+  .card-price { font-size: 18px; }
+
+  /* Cart drawer full-width on mobile */
+  .cart-drawer {
+    width: 100vw !important;
+  }
+
+  /* Safe area for bottom nav on iOS */
+  .cart-actions {
+    padding-bottom: calc(24px + env(safe-area-inset-bottom));
+  }
+}
+
+/* ============================================================
    DYNAMIC TOGGLE SIDEBAR LAYOUT (desktop >= 1024px)
    ============================================================ */
 @media (min-width: 1024px) {
-  /* Default page layout: transition padding when sidebar opens/closes */
   .app-container {
     padding-right: 0;
     transition: padding-right 0.35s var(--ease-smooth);
   }
-  /* Offset content when cart is open */
   .cart-open .app-container {
     padding-right: 390px;
   }
-
-  /* Transition header width */
   .site-header {
     right: 0;
     transition: right 0.35s var(--ease-smooth);
   }
-  /* Shrink header when cart is open to prevent logo/button overlap */
   .cart-open .site-header {
     right: 390px;
   }
-
-  /* Docked sidebar drawer style */
   .cart-drawer {
     position: fixed;
     top: 0;
     right: 0;
     bottom: 0;
     width: 390px !important;
-    transform: translateX(100%) !important; /* Hidden by default */
+    transform: translateX(100%) !important;
     transition: transform 0.35s var(--ease-smooth);
     box-shadow: -10px 0 40px rgba(0, 0, 0, 0.3);
     border-left: 1.5px solid rgba(255, 255, 255, 0.08);
     z-index: 150;
   }
-  /* Slide in and dock when open */
   .cart-open .cart-drawer {
     transform: translateX(0) !important;
   }
-
-  /* Disable backdrop dimming on desktop (keep menu interactive) */
   .cart-backdrop {
     display: none !important;
     opacity: 0 !important;
     pointer-events: none !important;
   }
-
-  /* Hide floating mobile FAB on desktop */
   .cart-fab {
     display: none !important;
   }
-
-  /* --- Dynamic Grid Column Adjustments --- */
-  /* Default: 3 columns starting at 1024px, 4 columns at 1280px */
   .menu-grid {
     grid-template-columns: repeat(3, 1fr) !important;
   }
   @media (min-width: 1280px) {
-    .menu-grid {
-      grid-template-columns: repeat(4, 1fr) !important;
-    }
+    .menu-grid { grid-template-columns: repeat(4, 1fr) !important; }
   }
-
-  /* When Sidebar is Open: 2 columns starting at 1024px, 3 columns at 1360px, 4 columns at 1720px */
   .cart-open .menu-grid {
     grid-template-columns: repeat(2, 1fr) !important;
   }
   @media (min-width: 1360px) {
-    .cart-open .menu-grid {
-      grid-template-columns: repeat(3, 1fr) !important;
-    }
+    .cart-open .menu-grid { grid-template-columns: repeat(3, 1fr) !important; }
   }
   @media (min-width: 1720px) {
-    .cart-open .menu-grid {
-      grid-template-columns: repeat(4, 1fr) !important;
-    }
+    .cart-open .menu-grid { grid-template-columns: repeat(4, 1fr) !important; }
   }
 }
