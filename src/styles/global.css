@@ -739,21 +739,36 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   pointer-events: none;
 }
 
-/* Clip wrapper: scales video slightly so edges overflow and bottom-right watermark is hidden */
+/* Clip wrapper — crops bottom-right corner to remove watermark */
 .intro-video-clip {
   position: absolute;
   inset: 0;
   overflow: hidden;
 }
 .intro-video {
-  width: 108%;
-  height: 108%;
+  /* Scale up 125%: anchored top-left so overflow goes to bottom-right */
+  width: 125%;
+  height: 125%;
   object-fit: cover;
   object-position: top left;
   position: absolute;
-  top: -4%;
-  left: -4%;
+  top: 0;
+  left: 0;
+  /* Bottom-right 25% is cropped — watermark lives there */
 }
+
+/* Belt-and-suspenders: dark gradient mask over bottom-right corner */
+.intro-corner-mask {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 40%;
+  height: 25%;
+  z-index: 5;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 100% 100%, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 40%, transparent 75%);
+}
+
 
 /* Play/Interact Overlay */
 .intro-overlay {
