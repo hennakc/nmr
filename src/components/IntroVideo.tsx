@@ -89,7 +89,7 @@ const IntroVideo: React.FC<IntroVideoProps> = ({ src, onComplete }) => {
 
   return (
     <div className={`intro-container ${isExiting ? 'intro-exit' : ''}`}>
-      {/* Clip wrapper hides the bottom-right Gemini watermark via overflow crop */}
+      {/* Clip wrapper fills the screen */}
       <div className="intro-video-clip">
         <video
           ref={videoRef}
@@ -99,9 +99,6 @@ const IntroVideo: React.FC<IntroVideoProps> = ({ src, onComplete }) => {
           onEnded={triggerExit}
         />
       </div>
-
-      {/* Guaranteed bottom-right watermark killer — dark gradient corner mask */}
-      <div className="intro-corner-mask" aria-hidden="true" />
 
       {/* Elegant Play Overlay for blocked autoplay */}
       {showPlayOverlay && (
