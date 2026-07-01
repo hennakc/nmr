@@ -738,11 +738,21 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   filter: blur(10px);
   pointer-events: none;
 }
+
+/* Clip wrapper: scales video slightly so edges overflow and bottom-right watermark is hidden */
+.intro-video-clip {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
 .intro-video {
-  width: 100%;
-  height: 100%;
+  width: 108%;
+  height: 108%;
   object-fit: cover;
-  object-position: center;
+  object-position: top left;
+  position: absolute;
+  top: -4%;
+  left: -4%;
 }
 
 /* Play/Interact Overlay */
@@ -988,3 +998,332 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     .cart-open .menu-grid { grid-template-columns: repeat(4, 1fr) !important; }
   }
 }
+
+/* ============================================================
+   DICE FAB — bottom left
+   ============================================================ */
+.dice-fab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  bottom: calc(20px + env(safe-area-inset-bottom));
+  left: 20px;
+  z-index: 199;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #D4A853 0%, #9B4915 100%);
+  color: #fff;
+  box-shadow: 0 8px 28px rgba(155, 73, 21, 0.55), 0 2px 8px rgba(0,0,0,0.3);
+  transition: all 0.3s var(--ease-bounce);
+}
+.dice-fab:active { transform: scale(0.9); box-shadow: 0 4px 12px rgba(155,73,21,0.4); }
+
+/* ============================================================
+   LUCKY DRAW MODAL
+   ============================================================ */
+@keyframes ldBackdropIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes ldModalIn {
+  from { opacity: 0; transform: translateY(40px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes ldReelSpin {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(var(--reel-offset)); }
+}
+@keyframes ldDotBounce {
+  0%,80%,100% { transform: translateY(0); opacity: 0.4; }
+  40%         { transform: translateY(-6px); opacity: 1; }
+}
+@keyframes ldShine {
+  from { transform: translateX(-100%) skewX(-15deg); }
+  to   { transform: translateX(300%) skewX(-15deg); }
+}
+@keyframes ldBillSlide {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.ld-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  background: rgba(10, 5, 2, 0.72);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: ldBackdropIn 0.3s ease;
+  padding: 20px;
+}
+
+.ld-modal {
+  background: linear-gradient(160deg, rgba(25, 12, 4, 0.97) 0%, rgba(14, 6, 2, 0.97) 100%);
+  border: 1.5px solid rgba(212, 168, 83, 0.25);
+  border-radius: 28px;
+  width: 100%;
+  max-width: 400px;
+  padding: 24px 20px 24px;
+  animation: ldModalIn 0.4s var(--ease-bounce);
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+}
+
+/* Header */
+.ld-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+.ld-header-left { display: flex; align-items: center; gap: 12px; }
+.ld-dice-wrap {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(212,168,83,0.2), rgba(155,73,21,0.2));
+  border: 1px solid rgba(212,168,83,0.25);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 16px rgba(155,73,21,0.25);
+}
+.ld-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-dark);
+  letter-spacing: -0.02em;
+}
+.ld-subtitle { font-size: 12px; color: var(--text-light); margin-top: 1px; }
+.ld-close-btn {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-mid);
+  transition: all 0.2s;
+}
+.ld-close-btn:active { background: rgba(255,255,255,0.15); transform: scale(0.92); }
+
+/* Single reel centered */
+.ld-reel-center {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+/* Single reel window (acts as viewport/mask) */
+.ld-reel-window {
+  width: 100%;
+  height: 220px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.04);
+  border: 1.5px solid rgba(212,168,83,0.15);
+  position: relative;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.4);
+}
+
+/* Highlight bar over the winner row */
+.ld-reel-window::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  border: 2px solid rgba(212,168,83,0.0);
+  transition: border-color 0.5s ease;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Strip */
+.ld-reel-strip {
+  display: flex;
+  flex-direction: column;
+  will-change: transform;
+  transform: translateY(0);
+}
+
+/* Spinning state: fast scroll up */
+.ld-reel-strip.ld-reel-spinning {
+  animation: ldReelSpin 2s cubic-bezier(0.1, 0.75, 0.4, 1) forwards;
+}
+
+/* Settled state: snap to winner */
+.ld-reel-strip.ld-reel-done {
+  transform: translateY(var(--reel-offset));
+  transition: transform 0.5s var(--ease-bounce);
+}
+
+/* Individual reel item */
+.ld-reel-item {
+  width: 100%;
+  height: 220px;
+  flex-shrink: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* Fade masks top & bottom */
+.ld-reel-fade-top,
+.ld-reel-fade-bottom {
+  position: absolute;
+  left: 0; right: 0;
+  height: 56px;
+  z-index: 4;
+  pointer-events: none;
+}
+.ld-reel-fade-top {
+  top: 0;
+  background: linear-gradient(to bottom, rgba(14,6,2,0.9), transparent);
+}
+.ld-reel-fade-bottom {
+  bottom: 0;
+  background: linear-gradient(to top, rgba(14,6,2,0.9), transparent);
+}
+
+.ld-reel-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.ld-reel-img-fallback {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #4A1E05, #8C5D1E);
+}
+
+.ld-reel-name {
+  position: relative;
+  z-index: 1;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  padding: 6px 8px;
+  background: rgba(0,0,0,0.65);
+  width: 100%;
+  letter-spacing: 0.01em;
+  line-height: 1.3;
+  backdrop-filter: blur(4px);
+}
+
+/* Divider after result */
+.ld-result-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212,168,83,0.35), transparent);
+  margin: 4px 0 16px;
+}
+
+/* Bill section */
+.ld-bill {
+  animation: ldBillSlide 0.45s var(--ease-smooth);
+  margin-bottom: 16px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(212,168,83,0.12);
+  border-radius: 18px;
+  padding: 16px;
+}
+.ld-bill-header {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-accent);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.ld-bill-item-name {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-dark);
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+  line-height: 1.2;
+}
+.ld-bill-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  color: var(--text-mid);
+  padding: 4px 0;
+}
+.ld-bill-row span:last-child { font-weight: 600; color: var(--text-dark); }
+.ld-bill-divider { height: 1px; background: rgba(255,255,255,0.07); margin: 8px 0; }
+.ld-bill-gst { font-size: 12px; color: var(--text-light); }
+.ld-bill-gst span:last-child { color: var(--text-light); font-weight: 400; }
+.ld-bill-total {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text-dark);
+  padding-top: 2px;
+}
+.ld-bill-total span:last-child { color: var(--text-price); font-weight: 800; }
+
+/* Actions */
+.ld-actions { display: flex; justify-content: center; }
+
+.ld-spin-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 32px;
+  border-radius: 99px;
+  background: linear-gradient(135deg, #D4A853, #9B4915);
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  box-shadow: 0 4px 20px rgba(155,73,21,0.45);
+  transition: all 0.25s var(--ease-bounce);
+  width: 100%;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.ld-spin-btn::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -60%;
+  width: 40%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+  animation: ldShine 2.5s ease infinite;
+  skewX: -15deg;
+}
+.ld-spin-btn:active { transform: scale(0.97); }
+
+/* Spinning indicator */
+.ld-spinning-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-light);
+  font-size: 14px;
+  padding: 14px 0;
+}
+.ld-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--text-accent);
+  display: inline-block;
+  animation: ldDotBounce 1s ease-in-out infinite;
+}
+.ld-dot:nth-child(2) { animation-delay: 0.15s; }
+.ld-dot:nth-child(3) { animation-delay: 0.30s; }
+

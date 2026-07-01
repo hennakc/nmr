@@ -89,13 +89,16 @@ const IntroVideo: React.FC<IntroVideoProps> = ({ src, onComplete }) => {
 
   return (
     <div className={`intro-container ${isExiting ? 'intro-exit' : ''}`}>
-      <video
-        ref={videoRef}
-        src={src}
-        className="intro-video"
-        playsInline
-        onEnded={triggerExit}
-      />
+      {/* Clip wrapper hides the bottom-right Gemini watermark */}
+      <div className="intro-video-clip">
+        <video
+          ref={videoRef}
+          src={src}
+          className="intro-video"
+          playsInline
+          onEnded={triggerExit}
+        />
+      </div>
 
       {/* Elegant Play Overlay for blocked autoplay */}
       {showPlayOverlay && (

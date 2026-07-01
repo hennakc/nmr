@@ -4,11 +4,13 @@ import IntroVideo from './components/IntroVideo';
 import Header from './components/Header';
 import MenuSection from './components/MenuSection';
 import CartDrawer from './components/CartDrawer';
+import LuckyDraw from './components/LuckyDraw';
 import './styles/global.css';
 
 const AppInner: React.FC = () => {
   const [showIntro, setShowIntro] = useState(true);
   const [cartOpen, setCartOpen] = useState(false);
+  const [luckyDrawOpen, setLuckyDrawOpen] = useState(false);
   const { totalItems } = useCart();
 
   const handleIntroComplete = useCallback(() => {
@@ -40,6 +42,24 @@ const AppInner: React.FC = () => {
 
           <CartDrawer isOpen={cartOpen} onClose={closeCart} />
 
+          {/* Dice FAB — Lucky Draw — bottom left */}
+          <button
+            className="dice-fab"
+            onClick={() => setLuckyDrawOpen(true)}
+            aria-label="Don't know what to eat — Lucky Draw"
+            title="Don't know what to eat?"
+          >
+            <svg viewBox="0 0 40 40" width="26" height="26" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="1" y="1" width="38" height="38" rx="9" fill="white" fillOpacity="0.18" stroke="white" strokeOpacity="0.35" strokeWidth="1.5"/>
+              <rect x="3" y="3" width="34" height="11" rx="6" fill="white" fillOpacity="0.1"/>
+              <circle cx="13" cy="13" r="3.5" fill="white"/>
+              <circle cx="27" cy="13" r="3.5" fill="white"/>
+              <circle cx="20" cy="20" r="3.5" fill="white"/>
+              <circle cx="13" cy="27" r="3.5" fill="white"/>
+              <circle cx="27" cy="27" r="3.5" fill="white"/>
+            </svg>
+          </button>
+
           {/* Floating Cart FAB */}
           <button
             className="cart-fab"
@@ -55,6 +75,9 @@ const AppInner: React.FC = () => {
               <span className="cart-fab-badge">{totalItems}</span>
             )}
           </button>
+
+          {/* Lucky Draw Modal */}
+          <LuckyDraw isOpen={luckyDrawOpen} onClose={() => setLuckyDrawOpen(false)} />
         </div>
       )}
     </>
