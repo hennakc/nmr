@@ -125,8 +125,8 @@ const LuckyDraw: React.FC<LuckyDrawProps> = ({ isOpen, onClose }) => {
               </svg>
             </div>
             <div>
-              <div className="ld-title">Chef's Surprise</div>
-              <div className="ld-subtitle">Spin & discover your meal!</div>
+              <div className="ld-title">Don't Know What to Eat?</div>
+              <div className="ld-subtitle">Spin & let us pick for you!</div>
             </div>
           </div>
           <button className="ld-close-btn" onClick={handleClose} aria-label="Close">
